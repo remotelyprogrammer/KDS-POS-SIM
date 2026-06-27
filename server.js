@@ -91,17 +91,20 @@ function buildPayload(format, order, eventType) {
 
   if (format === 'ls-central') {
     if (eventType === 'cancel') {
-      return { Type: 'cancel', KOTNo: order.posOrderId, VoidReason: order.reason || null };
+      return { Voided: true, KOTNo: order.posOrderId, VoidReason: order.reason || null };
     }
     return {
-      Type:       eventType === 'update' ? 'update' : 'new',
       KOTNo:      order.posOrderId,
+      IsModified: eventType === 'update' ? true : undefined,
+      StoreNo:    storeId,
       TableNo:    order.table,
-      SalesType:  order.orderType === 'Delivery' ? 'GRABFOOD' : order.orderType === 'Takeaway' ? 'TAKEAWAY' : 'DINE IN',
-      StaffName:  order.server,
-      GuestCount: order.guestCount,
-      Items: (order.items || []).map(i => ({
-        ItemCode: i.name, ItemDescription: i.name, Quantity: i.qty,
+      OrderType:  order.orderType === 'Delivery' ? 'DELIVERY' : order.orderType === 'Takeaway' ? 'TAKEAWAY' : 'DINEIN',
+      WaiterName: order.server,
+      Covers:     order.guestCount,
+      KOTLines: (order.items || []).map(i => ({
+        No:          i.name,
+        Description: i.name,
+        Quantity:    i.qty,
       })),
     };
   }
@@ -232,7 +235,7 @@ app.get('/sim/test-auth', async (_req, res) => {
   }
 
   // Send a minimal signed payload and check whether KDS accepts auth (non-401)
-  const testOrder = { posOrderId: 'TEST-000', table: 'T0', orderType: 'Dine In', server: 'ConnectionTest', guestCount: 1, items: [] };
+  const testOrder = { posOrderId: 'TEST-000', table: 'T0', orderType: 'Dine In', server: 'ConnectionTest', guestCount: 1, items: [{ name: 'TEST-ITEM', qty: 1, sid: 1 }] };
   const payload   = buildPayload(format, testOrder, 'new');
   const bodyStr   = JSON.stringify(payload);
   const headers   = authHeaders(format, bodyStr);
