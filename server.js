@@ -66,7 +66,7 @@ async function kdsRequest(method, endpoint, body = null, extraHeaders = {}) {
 function authHeaders(format, bodyStr) {
   const secrets = cfg().secrets || {};
   if (format === 'ls-central') {
-    return { 'x-ls-central-secret': secrets['ls-central'] || '' };
+    return { 'x-ls-secret': secrets['ls-central'] || '' };
   }
   if (format === 'square') {
     const secret = secrets.square || '';
