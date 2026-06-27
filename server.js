@@ -93,9 +93,6 @@ function buildPayload(format, order, eventType) {
     if (eventType === 'cancel') {
       return { Voided: true, KOTNo: order.posOrderId, VoidReason: order.reason || null };
     }
-    if (eventType === 'cancel_item') {
-      return { Voided: true, KOTNo: order.posOrderId, KOTLineId: order.orderItemId, VoidReason: order.reason || null };
-    }
     return {
       KOTNo:      order.posOrderId,
       IsModified: eventType === 'update' ? true : undefined,
@@ -115,9 +112,6 @@ function buildPayload(format, order, eventType) {
   if (format === 'square') {
     if (eventType === 'cancel') {
       return { type: 'order.canceled', data: { object: { order: { id: order.posOrderId } } } };
-    }
-    if (eventType === 'cancel_item') {
-      return { type: 'order.updated', data: { object: { order: { id: order.posOrderId }, line_item_id: order.orderItemId, void_reason: order.reason || null } } };
     }
     return {
       type: eventType === 'update' ? 'order.updated' : 'order.created',
@@ -141,9 +135,6 @@ function buildPayload(format, order, eventType) {
   if (format === 'generic') {
     if (eventType === 'cancel') {
       return { order_id: order.posOrderId, event_type: 'cancel', reason: order.reason || null };
-    }
-    if (eventType === 'cancel_item') {
-      return { order_id: order.posOrderId, item_id: order.orderItemId, event_type: 'cancel_item', reason: order.reason || null };
     }
     const STATIONS = ['pantry', 'saute', 'fry', 'bar'];
     return {
@@ -319,17 +310,9 @@ app.post('/sim/void-order', async (req, res) => {
 });
 
 app.post('/sim/void-item', async (req, res) => {
-  const { posOrderId, orderItemId, reason, format: fmt } = req.body;
-  const format  = fmt || cfg().format;
-  const payload = buildPayload(format, { posOrderId, orderItemId, reason }, 'cancel_item');
+  const { orderItemId, reason } = req.body;
   try {
-    let result;
-    if (payload) {
-      const bodyStr = JSON.stringify(payload);
-      result = await kdsRequest('POST', intakePath(format), payload, authHeaders(format, bodyStr));
-    } else {
-      result = await kdsRequest('POST', '/void/item', { pos_order_id: posOrderId, order_item_id: orderItemId, reason });
-    }
+    const result = await kdsRequest('POST', '/void/item', { order_item_id: parseInt(orderItemId, 10), reason });
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
