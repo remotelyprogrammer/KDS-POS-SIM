@@ -412,7 +412,7 @@ async function onVoidSelChange() {
   try {
     const data = await fetch('/sim/items/' + sel.value).then(r => r.json());
     isel.innerHTML = '<option value="">-- pick item --</option>';
-    (data.items || []).forEach(item => { const opt = document.createElement('option'); opt.value = item.item_id; opt.textContent = item.name + ' x' + item.quantity; isel.appendChild(opt); });
+    (data.items || []).forEach(item => { const opt = document.createElement('option'); opt.value = item.parent_item_id; opt.textContent = item.name + ' x' + item.quantity; isel.appendChild(opt); });
     if (data.items && data.items.length) { isel.disabled = false; viBtn.disabled = false; }
     else isel.innerHTML = '<option value="">No active items</option>';
   } catch(e) { isel.innerHTML = '<option value="">Error loading items</option>'; }
