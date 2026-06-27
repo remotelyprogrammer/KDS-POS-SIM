@@ -2,18 +2,53 @@ require('dotenv').config();
 const express = require('express');
 const crypto  = require('crypto');
 const path    = require('path');
+const fs      = require('fs');
 
-const app      = express();
-const KDS_URL  = (process.env.KDS_URL  || 'http://localhost:3001').replace(/\/$/, '');
-const FORMAT   = process.env.POS_FORMAT || 'manual';
-const PORT     = parseInt(process.env.PORT || '4000');
-const STORE_ID = process.env.STORE_ID || 'store_001';
+const app         = express();
+const PORT        = parseInt(process.env.PORT || '4000');
+const CONFIG_FILE = path.join(__dirname, 'sim-config.json');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ── Runtime config ────────────────────────────────────────────────────────────
+
+let _cfg = null;
+
+function loadConfig() {
+  if (fs.existsSync(CONFIG_FILE)) {
+    try { _cfg = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')); return; } catch (e) {}
+  }
+  _cfg = {
+    kdsUrl:  (process.env.KDS_URL || 'http://localhost:3001').replace(/\/$/, ''),
+    format:  process.env.POS_FORMAT || 'manual',
+    storeId: process.env.STORE_ID || 'store_001',
+    secrets: {
+      'ls-central': process.env.LS_CENTRAL_SECRET        || '',
+      square:       process.env.SQUARE_WEBHOOK_SECRET     || '',
+      generic:      process.env.GENERIC_WEBHOOK_SECRET    || '',
+    },
+  };
+}
+
+function cfg() {
+  if (!_cfg) loadConfig();
+  return _cfg;
+}
+
+function saveConfig(updates) {
+  const current = cfg();
+  if (updates.secrets) {
+    updates.secrets = { ...current.secrets, ...updates.secrets };
+  }
+  _cfg = { ...current, ...updates };
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(_cfg, null, 2));
+}
+
+// ── KDS request helper ────────────────────────────────────────────────────────
+
 async function kdsRequest(method, endpoint, body = null, extraHeaders = {}) {
-  const url  = KDS_URL + endpoint;
+  const url  = cfg().kdsUrl + endpoint;
   const opts = {
     method,
     headers: { 'Content-Type': 'application/json', ...extraHeaders },
@@ -26,20 +61,25 @@ async function kdsRequest(method, endpoint, body = null, extraHeaders = {}) {
   catch { return { status: res.status, ok: res.ok, body: text }; }
 }
 
+// ── Auth headers per format ───────────────────────────────────────────────────
+
 function authHeaders(format, bodyStr) {
+  const secrets = cfg().secrets || {};
   if (format === 'ls-central') {
-    return { 'x-ls-central-secret': process.env.LS_CENTRAL_SECRET || '' };
+    return { 'x-ls-central-secret': secrets['ls-central'] || '' };
   }
   if (format === 'square') {
-    const secret = process.env.SQUARE_WEBHOOK_SECRET || '';
+    const secret = secrets.square || '';
     const sig    = crypto.createHmac('sha256', secret).update(bodyStr).digest('base64');
     return { 'x-square-hmacsha256-signature': sig };
   }
   if (format === 'generic') {
-    return { 'x-webhook-secret': process.env.GENERIC_WEBHOOK_SECRET || '' };
+    return { 'x-webhook-secret': secrets.generic || '' };
   }
   return {};
 }
+
+// ── Payload builders ──────────────────────────────────────────────────────────
 
 function intakePath(format) {
   const map = { 'ls-central': '/intake/ls-central', square: '/intake/square', generic: '/intake/webhook' };
@@ -47,6 +87,8 @@ function intakePath(format) {
 }
 
 function buildPayload(format, order, eventType) {
+  const storeId = cfg().storeId || 'store_001';
+
   if (format === 'ls-central') {
     if (eventType === 'cancel') {
       return { Type: 'cancel', KOTNo: order.posOrderId, VoidReason: order.reason || null };
@@ -74,7 +116,7 @@ function buildPayload(format, order, eventType) {
         object: {
           order: {
             id:           order.posOrderId,
-            location_id:  STORE_ID,
+            location_id:  storeId,
             ticket_name:  order.table,
             fulfillments: [{ type: order.orderType === 'Delivery' ? 'DELIVERY' : order.orderType === 'Takeaway' ? 'PICKUP' : 'DINE_IN' }],
             line_items:   (order.items || []).map(i => ({
@@ -94,18 +136,18 @@ function buildPayload(format, order, eventType) {
     const STATIONS = ['pantry', 'saute', 'fry', 'bar'];
     return {
       order_id:    order.posOrderId,
-      store_id:    STORE_ID,
+      store_id:    storeId,
       event_type:  eventType,
       table:       order.table,
       order_type:  order.orderType === 'Dine In' ? 'dine_in' : order.orderType.toLowerCase().replace(' ', '_'),
       server_name: order.server,
       guest_count: order.guestCount,
       items: (order.items || []).map(i => ({
-        item_id:  i.name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-        name:     i.name,
-        quantity: i.qty,
+        item_id:   i.name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+        name:      i.name,
+        quantity:  i.qty,
         modifiers: [],
-        station:  STATIONS[i.sid - 1] || 'general',
+        station:   STATIONS[i.sid - 1] || 'general',
       })),
       created_at: new Date().toISOString(),
     };
@@ -125,16 +167,53 @@ function buildPayload(format, order, eventType) {
   };
 }
 
+// ── Settings routes ───────────────────────────────────────────────────────────
+
+app.get('/sim/settings', (_req, res) => {
+  const c = cfg();
+  res.json({
+    kdsUrl:  c.kdsUrl,
+    format:  c.format,
+    storeId: c.storeId,
+    secrets: {
+      'ls-central': c.secrets?.['ls-central'] ? '****' : '',
+      square:       c.secrets?.square         ? '****' : '',
+      generic:      c.secrets?.generic        ? '****' : '',
+    },
+  });
+});
+
+app.post('/sim/settings', (req, res) => {
+  const { kdsUrl, format, storeId, secrets } = req.body;
+  const updates = {};
+  if (kdsUrl  !== undefined) updates.kdsUrl  = kdsUrl.replace(/\/$/, '');
+  if (format  !== undefined) updates.format  = format;
+  if (storeId !== undefined) updates.storeId = storeId;
+  if (secrets) {
+    const filtered = {};
+    for (const [k, v] of Object.entries(secrets)) {
+      if (v && v !== '****') filtered[k] = v;
+    }
+    if (Object.keys(filtered).length) updates.secrets = filtered;
+  }
+  saveConfig(updates);
+  res.json({ saved: true });
+});
+
+// ── Info routes ───────────────────────────────────────────────────────────────
+
 app.get('/sim/config', (_req, res) => {
-  res.json({ kdsUrl: KDS_URL, format: FORMAT, port: PORT });
+  const c = cfg();
+  res.json({ kdsUrl: c.kdsUrl, format: c.format, port: PORT });
 });
 
 app.get('/sim/health', async (_req, res) => {
+  const c = cfg();
   try {
     const r = await kdsRequest('GET', '/intake/status');
-    res.json({ connected: r.ok, kdsUrl: KDS_URL, format: FORMAT, kds: r.body });
+    res.json({ connected: r.ok, kdsUrl: c.kdsUrl, format: c.format, kds: r.body });
   } catch (err) {
-    res.json({ connected: false, kdsUrl: KDS_URL, format: FORMAT, error: err.message });
+    res.json({ connected: false, kdsUrl: c.kdsUrl, format: c.format, error: err.message });
   }
 });
 
@@ -152,9 +231,11 @@ app.get('/sim/items/:posOrderId', async (req, res) => {
   }
 });
 
+// ── Simulator action routes ───────────────────────────────────────────────────
+
 app.post('/sim/fire', async (req, res) => {
   const { order, format: fmt } = req.body;
-  const format  = fmt || FORMAT;
+  const format  = fmt || cfg().format;
   const payload = buildPayload(format, order, 'new');
   const bodyStr = JSON.stringify(payload);
   try {
@@ -167,7 +248,7 @@ app.post('/sim/fire', async (req, res) => {
 
 app.post('/sim/edit', async (req, res) => {
   const { order, format: fmt } = req.body;
-  const format  = fmt || FORMAT;
+  const format  = fmt || cfg().format;
   const payload = buildPayload(format, order, 'update');
   const bodyStr = JSON.stringify(payload);
   try {
@@ -180,7 +261,7 @@ app.post('/sim/edit', async (req, res) => {
 
 app.post('/sim/void-order', async (req, res) => {
   const { posOrderId, reason, format: fmt } = req.body;
-  const format  = fmt || FORMAT;
+  const format  = fmt || cfg().format;
   const payload = buildPayload(format, { posOrderId, reason }, 'cancel');
   try {
     let result;
@@ -206,9 +287,13 @@ app.post('/sim/void-item', async (req, res) => {
   }
 });
 
+// ── Start ─────────────────────────────────────────────────────────────────────
+
+loadConfig();
 app.listen(PORT, () => {
+  const c = cfg();
   console.log(`\n  KDS POS Simulator`);
   console.log(`  http://localhost:${PORT}`);
-  console.log(`  KDS  →  ${KDS_URL}`);
-  console.log(`  Format  ${FORMAT}\n`);
+  console.log(`  KDS    →  ${c.kdsUrl}`);
+  console.log(`  Format →  ${c.format}\n`);
 });

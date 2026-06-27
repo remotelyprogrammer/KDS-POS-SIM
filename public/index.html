@@ -8,41 +8,39 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:        #0f1117;
-    --surface:   #1a1d27;
-    --surface2:  #1f2337;
-    --border:    #2a2f4a;
-    --text:      #e2e8f0;
-    --muted:     #64748b;
-    --green:     #4ade80;
-    --green-bg:  #052e16;
-    --green-bd:  #166534;
-    --red:       #f87171;
-    --red-bg:    #2d1010;
-    --red-bd:    #7f1d1d;
-    --amber:     #fbbf24;
-    --amber-bg:  #2d1f00;
-    --amber-bd:  #78350f;
-    --blue:      #60a5fa;
-    --blue-bg:   #0c1a2e;
-    --blue-bd:   #1e3a5f;
-    --radius:    6px;
+    --bg:       #0f1117;
+    --surface:  #1a1d27;
+    --surface2: #1f2337;
+    --border:   #2a2f4a;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --green:    #4ade80;
+    --green-bg: #052e16;
+    --green-bd: #166534;
+    --red:      #f87171;
+    --red-bg:   #2d1010;
+    --red-bd:   #7f1d1d;
+    --amber:    #fbbf24;
+    --amber-bg: #2d1f00;
+    --amber-bd: #78350f;
+    --blue:     #60a5fa;
+    --blue-bg:  #0c1a2e;
+    --blue-bd:  #1e3a5f;
+    --radius:   6px;
   }
 
   body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; font-size: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; align-items: stretch; gap: 0; flex-shrink: 0; height: 48px; }
+  .topbar-brand { display: flex; align-items: center; gap: 10px; padding-right: 20px; border-right: 1px solid var(--border); margin-right: 4px; }
   .topbar-title { font-weight: 600; font-size: 15px; }
-  .topbar-sub { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .topbar-sub { font-size: 11px; color: var(--muted); font-family: monospace; }
+
+  .tab { padding: 0 18px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-family: inherit; cursor: pointer; border-bottom: 2px solid transparent; height: 100%; display: flex; align-items: center; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+
   .spacer { flex: 1; }
-
-  select, input[type="text"], input[type="number"] {
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-    padding: 6px 10px; border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none;
-  }
-  select:focus, input:focus { border-color: #4f5a8a; }
-  input[type="number"] { width: 52px; }
-
   .conn { display: flex; align-items: center; gap: 7px; font-size: 13px; }
   .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.3s; }
   .conn-dot.ok { background: var(--green); }
@@ -51,101 +49,189 @@
   .conn-label.ok { color: var(--green); }
   .conn-label.fail { color: var(--red); }
 
-  .layout { display: grid; grid-template-columns: 280px 1fr; flex: 1; min-height: 0; }
-
-  .actions-panel { border-right: 1px solid var(--border); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-
-  .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .next-badge { font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 1px 7px; border-radius: 4px; font-size: 10px; }
-
-  .divider { border: none; border-top: 1px solid var(--border); }
+  select, input[type="text"], input[type="number"], input[type="password"] {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 7px 10px; border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none;
+  }
+  select:focus, input:focus { border-color: #4f5a8a; }
+  input[type="number"] { width: 52px; }
+  input[readonly] { opacity: 0.5; cursor: default; }
 
   button { font-family: inherit; cursor: pointer; font-size: 13px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); padding: 7px 14px; transition: opacity 0.15s; }
   button:hover { opacity: 0.85; }
   button:disabled { opacity: 0.35; cursor: not-allowed; }
 
-  .btn-fire { background: var(--green); color: #0a0a0a; border-color: var(--green); font-weight: 600; width: 100%; padding: 10px; }
-  .btn-auto { flex: 1; }
+  .btn-fire    { background: var(--green); color: #0a0a0a; border-color: var(--green); font-weight: 600; width: 100%; padding: 10px; }
+  .btn-auto    { flex: 1; }
   .btn-auto.running { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
-  .btn-edit { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); flex: 1; }
-  .btn-addon { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-bd); flex: 1; }
-  .btn-void { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); width: 100%; }
-  .btn-void-outline { background: transparent; color: var(--red); border-color: var(--red-bd); width: 100%; }
-  .btn-reset { background: transparent; color: var(--muted); border-color: transparent; width: 100%; font-size: 12px; }
+  .btn-edit    { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); flex: 1; }
+  .btn-addon   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-bd); flex: 1; }
+  .btn-void    { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); width: 100%; }
+  .btn-void-ol { background: transparent; color: var(--red); border-color: var(--red-bd); width: 100%; }
+  .btn-reset   { background: transparent; color: var(--muted); border-color: transparent; width: 100%; font-size: 12px; }
   .btn-confirm { background: var(--red); color: #0a0a0a; border-color: var(--red); font-weight: 600; flex: 1; }
+  .btn-save    { background: var(--blue); color: #0a0a0a; border-color: var(--blue); font-weight: 600; padding: 9px 24px; }
+  .btn-test    { padding: 9px 18px; }
 
   .row { display: flex; gap: 8px; align-items: center; }
   .full { width: 100%; }
 
-  .reason-box { background: var(--red-bg); border: 1px solid var(--red-bd); border-radius: var(--radius); padding: 12px; }
+  .reason-box   { background: var(--red-bg); border: 1px solid var(--red-bd); border-radius: var(--radius); padding: 12px; }
   .reason-title { font-size: 11px; font-weight: 600; color: var(--red); margin-bottom: 10px; }
-  .reason-opt { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; color: var(--text); font-size: 13px; }
+  .reason-opt   { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; color: var(--text); font-size: 13px; }
   .reason-opt input { accent-color: var(--red); }
 
-  .log-panel { display: flex; flex-direction: column; min-height: 0; }
+  .layout { display: grid; grid-template-columns: 280px 1fr; flex: 1; min-height: 0; }
+
+  .actions-panel { border-right: 1px solid var(--border); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+  .slabel { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .next-badge { font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 1px 7px; border-radius: 4px; font-size: 10px; }
+  .divider { border: none; border-top: 1px solid var(--border); }
+
+  .log-panel  { display: flex; flex-direction: column; min-height: 0; }
   .log-header { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .log-count { font-size: 12px; color: var(--muted); font-family: monospace; }
-  .filters { display: flex; gap: 4px; }
+  .log-count  { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .filters    { display: flex; gap: 4px; }
   .fb { padding: 3px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--muted); }
   .fb.on { background: var(--surface2); color: var(--text); border-color: #4f5a8a; }
-
-  .log-list { flex: 1; overflow-y: auto; }
+  .log-list  { flex: 1; overflow-y: auto; }
   .log-empty { padding: 48px 16px; text-align: center; color: var(--muted); font-size: 13px; }
-
-  .log-row { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  .log-row   { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; }
   .log-row:last-child { border-bottom: none; }
-
-  .badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; margin-top: 2px; font-family: monospace; letter-spacing: 0.03em; flex-shrink: 0; }
-  .b-new { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+  .badge  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; margin-top: 2px; font-family: monospace; flex-shrink: 0; }
+  .b-new  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
   .b-edit { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
   .b-addon { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-bd); }
   .b-void { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
-
-  .log-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .log-pos { font-weight: 600; font-family: monospace; font-size: 13px; }
-  .log-tag { font-size: 11px; color: var(--muted); }
-  .log-time { font-size: 11px; color: var(--muted); font-family: monospace; margin-left: auto; }
+  .log-meta   { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .log-pos    { font-weight: 600; font-family: monospace; font-size: 13px; }
+  .log-tag    { font-size: 11px; color: var(--muted); }
+  .log-time   { font-size: 11px; color: var(--muted); font-family: monospace; margin-left: auto; }
   .log-detail { font-size: 12px; color: #94a3b8; margin-top: 3px; font-family: monospace; }
   .log-status { font-size: 11px; margin-top: 3px; }
-  .log-status.ok { color: var(--green); }
+  .log-status.ok   { color: var(--green); }
   .log-status.fail { color: var(--red); }
 
-  .kds-url-input { width: 100%; font-family: monospace; font-size: 12px; }
+  .settings-wrap { flex: 1; overflow-y: auto; padding: 32px; display: none; }
+  .settings-wrap.visible { display: block; }
+  .sim-wrap { display: contents; }
+  .sim-wrap.hidden > * { display: none; }
+
+  .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; max-width: 600px; margin-bottom: 20px; }
+  .settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 18px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+  .field input, .field select { width: 100%; }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .webhook-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-family: monospace; font-size: 12px; color: var(--muted); margin-top: 6px; word-break: break-all; }
+  .secret-row { display: flex; gap: 8px; align-items: center; }
+  .secret-row input { flex: 1; }
+  .secret-set { font-size: 11px; color: var(--green); }
+  .secret-unset { font-size: 11px; color: var(--muted); }
+  .save-row { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+  .save-msg { font-size: 13px; color: var(--green); display: none; }
+  .save-msg.visible { display: block; }
+  .test-result { font-size: 12px; margin-top: 6px; font-family: monospace; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div>
-    <div class="topbar-title">KDS POS Simulator</div>
-    <div class="topbar-sub" id="kdsUrlLabel">http://localhost:3001</div>
+  <div class="topbar-brand">
+    <div>
+      <div class="topbar-title">KDS POS Simulator</div>
+      <div class="topbar-sub" id="kdsUrlLabel">—</div>
+    </div>
   </div>
+  <button class="tab active" id="tabSim" onclick="switchTab('sim')">Simulator</button>
+  <button class="tab" id="tabSettings" onclick="switchTab('settings')">Settings</button>
   <div class="spacer"></div>
-  <select id="formatSel">
-    <option value="manual">Manual</option>
-    <option value="ls-central">LS Central</option>
-    <option value="square">Square</option>
-    <option value="generic">Generic webhook</option>
-  </select>
   <div class="conn">
     <span class="conn-dot" id="connDot"></span>
     <span class="conn-label" id="connLabel">Checking...</span>
   </div>
 </div>
 
-<div class="layout">
+<!-- ── Settings view ───────────────────────────────────────────────────────── -->
+
+<div class="settings-wrap" id="settingsView">
+
+  <div class="settings-card">
+    <div class="settings-card-title">Connection</div>
+
+    <div class="field">
+      <label>KDS server URL</label>
+      <input type="text" id="cfgUrl" placeholder="http://192.168.1.100:3001" oninput="updateWebhookPreview()" />
+      <div class="hint">IP address of the machine running the KDS server.</div>
+    </div>
+
+    <div class="field">
+      <label>POS format</label>
+      <select id="cfgFormat" onchange="updateWebhookPreview()">
+        <option value="manual">Manual</option>
+        <option value="ls-central">LS Central</option>
+        <option value="square">Square</option>
+        <option value="generic">Generic webhook</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Webhook URL — give this to your POS vendor</label>
+      <div class="webhook-preview" id="webhookPreview">—</div>
+      <div class="hint">The KDS will receive orders at this URL.</div>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <div class="settings-card-title">Credentials</div>
+
+    <div id="credsLsCentral" class="field">
+      <label>LS Central — shared secret <span id="lcStatus" class="secret-unset">(not set)</span></label>
+      <div class="secret-row">
+        <input type="password" id="secretLc" placeholder="Enter secret..." autocomplete="off" />
+      </div>
+      <div class="hint">Enter the same secret configured in KDS Admin → Integration → LS Central.</div>
+    </div>
+
+    <div id="credsSquare" class="field" style="display:none;">
+      <label>Square — webhook secret <span id="sqStatus" class="secret-unset">(not set)</span></label>
+      <div class="secret-row">
+        <input type="password" id="secretSq" placeholder="Enter secret..." autocomplete="off" />
+      </div>
+      <div class="hint">Enter the same secret configured in KDS Admin → Integration → Square.</div>
+    </div>
+
+    <div id="credsGeneric" class="field" style="display:none;">
+      <label>Generic webhook — secret <span id="gwStatus" class="secret-unset">(not set)</span></label>
+      <div class="secret-row">
+        <input type="password" id="secretGw" placeholder="Enter secret..." autocomplete="off" />
+      </div>
+      <div class="hint">Enter the same secret configured in KDS Admin → Integration → Generic Webhook.</div>
+    </div>
+
+    <div id="credsManual" class="field" style="display:none;">
+      <div style="color: var(--muted); font-size: 13px;">Manual format does not require a secret.</div>
+    </div>
+  </div>
+
+  <div class="save-row">
+    <button class="btn-test" onclick="testConnection()">Test connection</button>
+    <button class="btn-save" onclick="saveSettings()">Save settings</button>
+    <span class="save-msg" id="saveMsg">&#10003; Settings saved</span>
+  </div>
+  <div class="test-result" id="testResult"></div>
+
+</div>
+
+<!-- ── Simulator view ──────────────────────────────────────────────────────── -->
+
+<div class="sim-wrap" id="simView">
 
   <div class="actions-panel">
 
     <div>
-      <div class="section-title">KDS server</div>
-      <input type="text" id="kdsUrlInput" class="kds-url-input" placeholder="http://192.168.1.100:3001" />
-    </div>
-
-    <hr class="divider" />
-
-    <div>
-      <div class="section-title">
+      <div class="slabel">
         <span>New order</span>
         <span class="next-badge" id="nextNum">next: #000101</span>
       </div>
@@ -163,7 +249,7 @@
     <hr class="divider" />
 
     <div>
-      <div class="section-title">Existing order</div>
+      <div class="slabel">Existing order</div>
       <select id="existSel" class="full" style="margin-bottom:8px;">
         <option value="">-- pick from log --</option>
       </select>
@@ -176,7 +262,7 @@
     <hr class="divider" />
 
     <div>
-      <div class="section-title">Void / cancel</div>
+      <div class="slabel">Void / cancel</div>
 
       <select id="voidSel" class="full" style="margin-bottom:8px;" onchange="onVoidSelChange()">
         <option value="">-- pick order --</option>
@@ -218,12 +304,11 @@
           </div>
         </div>
       </div>
-      <button class="btn-void-outline" id="viBtnEl" onclick="openVI()" disabled>&#10005; Void item</button>
+      <button class="btn-void-ol" id="viBtnEl" onclick="openVI()" disabled>&#10005; Void item</button>
     </div>
 
     <hr class="divider" />
     <button class="btn-reset" onclick="resetAll()">&#128465; Reset all orders</button>
-
   </div>
 
   <div class="log-panel">
@@ -233,10 +318,10 @@
         <span class="log-count" id="logCount">0 events</span>
       </div>
       <div class="filters">
-        <button class="fb on" id="fAll" onclick="setFilter('all')">All</button>
-        <button class="fb" id="fNew" onclick="setFilter('new')">New</button>
-        <button class="fb" id="fEdit" onclick="setFilter('edit')">Edit</button>
-        <button class="fb" id="fVoid" onclick="setFilter('void')">Void</button>
+        <button class="fb on" id="fAll"  onclick="setFilter('all')">All</button>
+        <button class="fb"    id="fNew"  onclick="setFilter('new')">New</button>
+        <button class="fb"    id="fEdit" onclick="setFilter('edit')">Edit</button>
+        <button class="fb"    id="fVoid" onclick="setFilter('void')">Void</button>
       </div>
     </div>
     <div class="log-list" id="logList">
@@ -247,17 +332,13 @@
 </div>
 
 <script>
-const MENU = {
-  1: ['S-BEEFSALPICAO','L-WHTERICE','S-GARLICHKN','L-BANGUSINASAL'],
-  2: ['L-CRSPYPANCT','L-PASTABOLOGNESE','S-CHICKENADOBO','L-CALDERETA'],
-  3: ['S-PATISWINGS','L-FRIEDCHICKEN','S-CALAMARI','L-FISHFILLET'],
-  4: ['COKE','ICED TEA','BUKO JUICE','LEMONADE'],
-};
+const MENU    = { 1:['S-BEEFSALPICAO','L-WHTERICE','S-GARLICHKN','L-BANGUSINASAL'], 2:['L-CRSPYPANCT','L-PASTABOLOGNESE','S-CHICKENADOBO','L-CALDERETA'], 3:['S-PATISWINGS','L-FRIEDCHICKEN','S-CALAMARI','L-FISHFILLET'], 4:['COKE','ICED TEA','BUKO JUICE','LEMONADE'] };
 const TABLES  = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10'];
 const TYPES   = ['Dine In','Dine In','Takeaway','Delivery'];
 const SERVERS = ['Maria','Carlo','Ana','Jose','Liza'];
 const RLABELS = { wrong_item:'Wrong item', customer_changed_mind:'Changed mind', out_of_stock:'Out of stock', other:'Other' };
 const BDEFS   = { new:{l:'NEW',c:'b-new'}, edit:{l:'EDIT',c:'b-edit'}, addon:{l:'ADD-ON',c:'b-addon'}, void_order:{l:'VOID',c:'b-void'}, void_item:{l:'VOID ITEM',c:'b-void'} };
+const FORMAT_PATHS = { 'ls-central': '/intake/ls-central', square: '/intake/square', generic: '/intake/webhook', manual: '/intake/manual' };
 
 function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
 function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
@@ -265,10 +346,9 @@ function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
 let ctr    = parseInt(localStorage.getItem('sim_ctr') || '100');
 let events = [];
 try { events = JSON.parse(localStorage.getItem('sim_evts') || '[]'); } catch(e) {}
-let filter  = 'all';
-let autoT   = null;
-let kdsUrl  = '';
-let format  = 'ls-central';
+let filter = 'all';
+let autoT  = null;
+let format = 'ls-central';
 
 function save() { localStorage.setItem('sim_evts', JSON.stringify(events)); localStorage.setItem('sim_ctr', ctr); }
 function nextNum() { ctr++; save(); return String(ctr).padStart(6,'0'); }
@@ -277,19 +357,12 @@ function buildItems() {
   if (!sids.length) sids.push(1);
   return sids.map(s => ({ name: pick(MENU[s]), qty: rand(1,3), sid: s }));
 }
-
 async function simPost(endpoint, body) {
-  const res  = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  const res = await fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   return res.json();
 }
 
-function addEvent(e) {
-  events.unshift(e);
-  if (events.length > 60) events = events.slice(0, 60);
-  save();
-  refreshDropdowns();
-  renderLog();
-}
+function addEvent(e) { events.unshift(e); if (events.length > 60) events = events.slice(0,60); save(); refreshDropdowns(); renderLog(); }
 
 function activeOrders() {
   const voided = new Set(events.filter(e => e.t === 'void_order').map(e => e.pos));
@@ -300,171 +373,98 @@ function activeOrders() {
 function refreshDropdowns() {
   const orders = activeOrders();
   ['existSel','voidSel'].forEach(id => {
-    const sel  = document.getElementById(id);
-    const prev = sel.value;
+    const sel = document.getElementById(id); const prev = sel.value;
     sel.innerHTML = '<option value="">-- pick from log --</option>';
-    orders.forEach(o => {
-      const opt = document.createElement('option');
-      opt.value       = o.pos;
-      opt.textContent = '#' + o.pos + '  ' + o.table + '  ' + o.otype;
-      sel.appendChild(opt);
-    });
+    orders.forEach(o => { const opt = document.createElement('option'); opt.value = o.pos; opt.textContent = '#' + o.pos + '  ' + o.table + '  ' + o.otype; sel.appendChild(opt); });
     if (prev) sel.value = prev;
   });
   document.getElementById('nextNum').textContent = 'next: #' + String(ctr + 1).padStart(6,'0');
 }
 
 async function onVoidSelChange() {
-  const sel  = document.getElementById('voidSel');
-  const isel = document.getElementById('itemSel');
-  const viBtn = document.getElementById('viBtnEl');
-  if (!sel.value) {
-    isel.innerHTML = '<option value="">-- select order first --</option>';
-    isel.disabled  = true;
-    viBtn.disabled = true;
-    return;
-  }
-  isel.innerHTML = '<option value="">Loading items...</option>';
-  isel.disabled  = true;
-  viBtn.disabled = true;
+  const sel = document.getElementById('voidSel'); const isel = document.getElementById('itemSel'); const viBtn = document.getElementById('viBtnEl');
+  if (!sel.value) { isel.innerHTML = '<option value="">-- select order first --</option>'; isel.disabled = true; viBtn.disabled = true; return; }
+  isel.innerHTML = '<option value="">Loading items...</option>'; isel.disabled = true; viBtn.disabled = true;
   try {
     const data = await fetch('/sim/items/' + sel.value).then(r => r.json());
     isel.innerHTML = '<option value="">-- pick item --</option>';
-    (data.items || []).forEach(item => {
-      const opt = document.createElement('option');
-      opt.value       = item.id;
-      opt.textContent = item.name + ' x' + item.quantity;
-      isel.appendChild(opt);
-    });
-    if (data.items && data.items.length > 0) {
-      isel.disabled  = false;
-      viBtn.disabled = false;
-    } else {
-      isel.innerHTML = '<option value="">No active items</option>';
-    }
-  } catch(e) {
-    isel.innerHTML = '<option value="">Error loading items</option>';
-  }
+    (data.items || []).forEach(item => { const opt = document.createElement('option'); opt.value = item.id; opt.textContent = item.name + ' x' + item.quantity; isel.appendChild(opt); });
+    if (data.items && data.items.length) { isel.disabled = false; viBtn.disabled = false; }
+    else isel.innerHTML = '<option value="">No active items</option>';
+  } catch(e) { isel.innerHTML = '<option value="">Error loading items</option>'; }
 }
 
 async function fireOrder() {
-  const num   = nextNum();
-  const table = pick(TABLES);
-  const otype = pick(TYPES);
-  const items = buildItems();
+  const num = nextNum(); const table = pick(TABLES); const otype = pick(TYPES); const items = buildItems();
   const order = { posOrderId: num, table, orderType: otype, server: pick(SERVERS), guestCount: rand(1,6), items };
   try {
     const result = await simPost('/sim/fire', { order, format });
     addEvent({ t:'new', pos:num, table, otype, items, time:new Date().toLocaleTimeString(), fmt:format, status:result.status, ok:result.ok });
   } catch(e) {
-    addEvent({ t:'new', pos:num, table, otype, items, time:new Date().toLocaleTimeString(), fmt:format, status:0, ok:false, err:e.message });
+    addEvent({ t:'new', pos:num, table, otype, items, time:new Date().toLocaleTimeString(), fmt:format, status:0, ok:false });
   }
 }
 
 function toggleAuto() {
   const btn = document.getElementById('autoBtn');
-  if (autoT) {
-    clearInterval(autoT); autoT = null;
-    btn.textContent = '▶ Auto fire';
-    btn.classList.remove('running');
-  } else {
-    const sec = parseInt(document.getElementById('autoSec').value) || 8;
-    fireOrder();
-    autoT = setInterval(fireOrder, sec * 1000);
-    btn.textContent = '⏹ Stop auto';
-    btn.classList.add('running');
-  }
+  if (autoT) { clearInterval(autoT); autoT = null; btn.textContent = '▶ Auto fire'; btn.classList.remove('running'); }
+  else { const sec = parseInt(document.getElementById('autoSec').value) || 8; fireOrder(); autoT = setInterval(fireOrder, sec * 1000); btn.textContent = '⏹ Stop auto'; btn.classList.add('running'); }
 }
 
 async function editOrder() {
-  const sel = document.getElementById('existSel');
-  if (!sel.value) return;
-  const orig = events.find(e => e.pos === sel.value && e.t === 'new');
-  if (!orig) return;
-  const r = Math.random();
-  let chg, newItems;
-  if (r < 0.4 && orig.items.length) {
-    const it = orig.items[0];
-    chg      = 'qty ' + it.name + ': ' + it.qty + ' → ' + (it.qty + 1);
-    newItems = orig.items.map((i,idx) => idx === 0 ? {...i, qty: i.qty + 1} : i);
-  } else if (r < 0.7) {
-    const s  = rand(1,4);
-    const ni = { name: pick(MENU[s]), qty: rand(1,2), sid: s };
-    chg      = 'added ' + ni.name + ' x' + ni.qty;
-    newItems = [...orig.items, ni];
-  } else {
-    chg      = 'modifier: extra spicy';
-    newItems = orig.items;
-  }
+  const sel = document.getElementById('existSel'); if (!sel.value) return;
+  const orig = events.find(e => e.pos === sel.value && e.t === 'new'); if (!orig) return;
+  const r = Math.random(); let chg, newItems;
+  if (r < 0.4 && orig.items.length) { const it = orig.items[0]; chg = 'qty ' + it.name + ': ' + it.qty + ' → ' + (it.qty + 1); newItems = orig.items.map((i,idx) => idx === 0 ? {...i, qty: i.qty + 1} : i); }
+  else if (r < 0.7) { const s = rand(1,4); const ni = { name: pick(MENU[s]), qty: rand(1,2), sid: s }; chg = 'added ' + ni.name + ' x' + ni.qty; newItems = [...orig.items, ni]; }
+  else { chg = 'modifier: extra spicy'; newItems = orig.items; }
   const order = { posOrderId: sel.value, table: orig.table, orderType: orig.otype, server: orig.server, guestCount: orig.guestCount || 2, items: newItems };
   try {
     const result = await simPost('/sim/edit', { order, format });
     addEvent({ t:'edit', pos:sel.value, table:orig.table, otype:orig.otype, chg, time:new Date().toLocaleTimeString(), status:result.status, ok:result.ok });
-  } catch(e) {
-    addEvent({ t:'edit', pos:sel.value, table:orig.table, otype:orig.otype, chg, time:new Date().toLocaleTimeString(), status:0, ok:false, err:e.message });
-  }
+  } catch(e) { addEvent({ t:'edit', pos:sel.value, table:orig.table, otype:orig.otype, chg, time:new Date().toLocaleTimeString(), status:0, ok:false }); }
 }
 
 async function addOnOrder() {
-  const sel = document.getElementById('existSel');
-  if (!sel.value) return;
-  const orig = events.find(e => e.pos === sel.value && e.t === 'new');
-  if (!orig) return;
-  const s    = rand(1,4);
-  const item = { name: pick(MENU[s]), qty: rand(1,2), sid: s };
+  const sel = document.getElementById('existSel'); if (!sel.value) return;
+  const orig = events.find(e => e.pos === sel.value && e.t === 'new'); if (!orig) return;
+  const s = rand(1,4); const item = { name: pick(MENU[s]), qty: rand(1,2), sid: s };
   const order = { posOrderId: sel.value, table: orig.table, orderType: orig.otype, server: orig.server, guestCount: 1, items: [item] };
   try {
     const result = await simPost('/sim/fire', { order, format });
     addEvent({ t:'addon', pos:sel.value, table:orig.table, otype:orig.otype, items:[item], time:new Date().toLocaleTimeString(), status:result.status, ok:result.ok });
-  } catch(e) {
-    addEvent({ t:'addon', pos:sel.value, table:orig.table, otype:orig.otype, items:[item], time:new Date().toLocaleTimeString(), status:0, ok:false, err:e.message });
-  }
+  } catch(e) { addEvent({ t:'addon', pos:sel.value, table:orig.table, otype:orig.otype, items:[item], time:new Date().toLocaleTimeString(), status:0, ok:false }); }
 }
 
 function openVO()  { if (!document.getElementById('voidSel').value) return; document.getElementById('voBox').style.display='block'; document.getElementById('voBtnEl').style.display='none'; }
 function closeVO() { document.getElementById('voBox').style.display='none'; document.getElementById('voBtnEl').style.display='block'; document.querySelectorAll('input[name="voR"]').forEach(r=>r.checked=false); }
 async function confirmVO() {
-  const r = document.querySelector('input[name="voR"]:checked');
-  if (!r) return;
-  const sel = document.getElementById('voidSel');
-  const pos = sel.value;
+  const r = document.querySelector('input[name="voR"]:checked'); if (!r) return;
+  const sel = document.getElementById('voidSel'); const pos = sel.value;
   try {
     const result = await simPost('/sim/void-order', { posOrderId: pos, reason: r.value, format });
     const orig = events.find(e => e.pos === pos);
     addEvent({ t:'void_order', pos, table:orig?.table||'', reason:r.value, time:new Date().toLocaleTimeString(), status:result.status, ok:result.ok });
-  } catch(e) {
-    addEvent({ t:'void_order', pos, reason:r.value, time:new Date().toLocaleTimeString(), status:0, ok:false, err:e.message });
-  }
+  } catch(e) { addEvent({ t:'void_order', pos, reason:r.value, time:new Date().toLocaleTimeString(), status:0, ok:false }); }
   closeVO(); sel.value = ''; onVoidSelChange();
 }
 
-function openVI()  {
-  const order = document.getElementById('voidSel').value;
-  const item  = document.getElementById('itemSel').value;
-  if (!order || !item) return;
-  document.getElementById('viBox').style.display='block'; document.getElementById('viBtnEl').style.display='none';
-}
+function openVI()  { if (!document.getElementById('voidSel').value || !document.getElementById('itemSel').value) return; document.getElementById('viBox').style.display='block'; document.getElementById('viBtnEl').style.display='none'; }
 function closeVI() { document.getElementById('viBox').style.display='none'; document.getElementById('viBtnEl').style.display='block'; document.querySelectorAll('input[name="viR"]').forEach(r=>r.checked=false); }
 async function confirmVI() {
-  const r    = document.querySelector('input[name="viR"]:checked');
-  if (!r) return;
-  const isel = document.getElementById('itemSel');
-  const vsel = document.getElementById('voidSel');
+  const r = document.querySelector('input[name="viR"]:checked'); if (!r) return;
+  const isel = document.getElementById('itemSel'); const vsel = document.getElementById('voidSel');
   const itemName = isel.options[isel.selectedIndex]?.text || '';
   try {
     const result = await simPost('/sim/void-item', { orderItemId: isel.value, reason: r.value });
     addEvent({ t:'void_item', pos:vsel.value, item:itemName, reason:r.value, time:new Date().toLocaleTimeString(), status:result.status, ok:result.ok });
-  } catch(e) {
-    addEvent({ t:'void_item', pos:vsel.value, item:itemName, reason:r.value, time:new Date().toLocaleTimeString(), status:0, ok:false, err:e.message });
-  }
+  } catch(e) { addEvent({ t:'void_item', pos:vsel.value, item:itemName, reason:r.value, time:new Date().toLocaleTimeString(), status:0, ok:false }); }
   closeVI();
 }
 
 function setFilter(f) {
   filter = f;
-  ['all','new','edit','void'].forEach(k => {
-    document.getElementById('f' + k[0].toUpperCase() + k.slice(1)).classList.toggle('on', f === k);
-  });
+  ['all','new','edit','void'].forEach(k => document.getElementById('f' + k[0].toUpperCase() + k.slice(1)).classList.toggle('on', f === k));
   renderLog();
 }
 
@@ -480,29 +480,16 @@ function renderLog() {
   if (!filtered.length) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   filtered.forEach(e => {
-    const b = BDEFS[e.t] || { l: e.t, c: 'b-new' };
+    const b = BDEFS[e.t] || { l:e.t, c:'b-new' };
     let detail = '';
-    if (e.t === 'new')        detail = (e.items || []).map(i => i.name + 'x' + i.qty).join(', ');
-    if (e.t === 'addon')      detail = '+ ' + (e.items || []).map(i => i.name + 'x' + i.qty).join(', ');
+    if (e.t === 'new')        detail = (e.items||[]).map(i => i.name+'x'+i.qty).join(', ');
+    if (e.t === 'addon')      detail = '+ ' + (e.items||[]).map(i => i.name+'x'+i.qty).join(', ');
     if (e.t === 'edit')       detail = e.chg || '';
-    if (e.t === 'void_order') detail = 'reason: ' + (RLABELS[e.reason] || e.reason);
-    if (e.t === 'void_item')  detail = e.item + '  reason: ' + (RLABELS[e.reason] || e.reason);
-    const statusTxt = e.status ? e.status + (e.ok ? ' OK' : ' ERR') : (e.err || '');
-    const div = document.createElement('div');
-    div.className = 'log-row';
-    div.innerHTML = `
-      <span class="badge ${b.c}">${b.l}</span>
-      <div style="flex:1;min-width:0;">
-        <div class="log-meta">
-          <span class="log-pos">#${e.pos}</span>
-          ${e.table ? `<span class="log-tag">${e.table}</span>` : ''}
-          ${e.otype  ? `<span class="log-tag">${e.otype}</span>` : ''}
-          ${e.fmt    ? `<span class="log-tag">${e.fmt}</span>` : ''}
-          <span class="log-time">${e.time}</span>
-        </div>
-        ${detail ? `<div class="log-detail">${detail}</div>` : ''}
-        ${statusTxt ? `<div class="log-status ${e.ok ? 'ok' : 'fail'}">${statusTxt}</div>` : ''}
-      </div>`;
+    if (e.t === 'void_order') detail = 'reason: ' + (RLABELS[e.reason]||e.reason);
+    if (e.t === 'void_item')  detail = e.item + '  reason: ' + (RLABELS[e.reason]||e.reason);
+    const statusTxt = e.status ? e.status + (e.ok ? ' OK' : ' ERR') : '';
+    const div = document.createElement('div'); div.className = 'log-row';
+    div.innerHTML = `<span class="badge ${b.c}">${b.l}</span><div style="flex:1;min-width:0;"><div class="log-meta"><span class="log-pos">#${e.pos}</span>${e.table?`<span class="log-tag">${e.table}</span>`:''} ${e.otype?`<span class="log-tag">${e.otype}</span>`:''} ${e.fmt?`<span class="log-tag">${e.fmt}</span>`:''}<span class="log-time">${e.time}</span></div>${detail?`<div class="log-detail">${detail}</div>`:''}${statusTxt?`<div class="log-status ${e.ok?'ok':'fail'}">${statusTxt}</div>`:''}</div>`;
     list.appendChild(div);
   });
 }
@@ -510,38 +497,104 @@ function renderLog() {
 async function resetAll() {
   if (!confirm('Clear all events and reset the order counter?')) return;
   if (autoT) toggleAuto();
-  events = []; ctr = 100; save();
-  refreshDropdowns(); renderLog();
+  events = []; ctr = 100; save(); refreshDropdowns(); renderLog();
+}
+
+// ── Settings ──────────────────────────────────────────────────────────────────
+
+function updateWebhookPreview() {
+  const url = (document.getElementById('cfgUrl').value || '').replace(/\/$/, '');
+  const fmt = document.getElementById('cfgFormat').value;
+  const suffix = FORMAT_PATHS[fmt] || '/intake/manual';
+  document.getElementById('webhookPreview').textContent = url ? url + suffix : '—';
+  updateCredFields(fmt);
+}
+
+function updateCredFields(fmt) {
+  document.getElementById('credsLsCentral').style.display = fmt === 'ls-central' ? 'block' : 'none';
+  document.getElementById('credsSquare').style.display    = fmt === 'square'     ? 'block' : 'none';
+  document.getElementById('credsGeneric').style.display   = fmt === 'generic'    ? 'block' : 'none';
+  document.getElementById('credsManual').style.display    = fmt === 'manual'     ? 'block' : 'none';
+}
+
+async function loadSettings() {
+  try {
+    const data = await fetch('/sim/settings').then(r => r.json());
+    document.getElementById('cfgUrl').value    = data.kdsUrl || '';
+    document.getElementById('cfgFormat').value = data.format || 'manual';
+    document.getElementById('lcStatus').textContent = data.secrets?.['ls-central'] ? '(set)' : '(not set)';
+    document.getElementById('lcStatus').className   = data.secrets?.['ls-central'] ? 'secret-set' : 'secret-unset';
+    document.getElementById('sqStatus').textContent = data.secrets?.square ? '(set)' : '(not set)';
+    document.getElementById('sqStatus').className   = data.secrets?.square ? 'secret-set' : 'secret-unset';
+    document.getElementById('gwStatus').textContent = data.secrets?.generic ? '(set)' : '(not set)';
+    document.getElementById('gwStatus').className   = data.secrets?.generic ? 'secret-set' : 'secret-unset';
+    updateWebhookPreview();
+  } catch(e) {}
+}
+
+async function saveSettings() {
+  const url    = document.getElementById('cfgUrl').value.trim();
+  const fmt    = document.getElementById('cfgFormat').value;
+  const lcVal  = document.getElementById('secretLc').value;
+  const sqVal  = document.getElementById('secretSq').value;
+  const gwVal  = document.getElementById('secretGw').value;
+  const secrets = {};
+  if (lcVal) secrets['ls-central'] = lcVal;
+  if (sqVal) secrets.square        = sqVal;
+  if (gwVal) secrets.generic       = gwVal;
+  await fetch('/sim/settings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ kdsUrl: url, format: fmt, secrets }) });
+  format = fmt;
+  document.getElementById('kdsUrlLabel').textContent = url;
+  document.getElementById('saveMsg').classList.add('visible');
+  setTimeout(() => document.getElementById('saveMsg').classList.remove('visible'), 3000);
+  document.getElementById('secretLc').value = '';
+  document.getElementById('secretSq').value = '';
+  document.getElementById('secretGw').value = '';
+  await loadSettings();
+}
+
+async function testConnection() {
+  const el = document.getElementById('testResult');
+  el.style.color = 'var(--muted)';
+  el.textContent = 'Testing...';
+  try {
+    const data = await fetch('/sim/health').then(r => r.json());
+    if (data.connected) {
+      el.style.color = 'var(--green)';
+      el.textContent = '✓ Connected — KDS responded OK';
+    } else {
+      el.style.color = 'var(--red)';
+      el.textContent = '✗ Cannot reach KDS at ' + data.kdsUrl + (data.error ? ' (' + data.error + ')' : '');
+    }
+  } catch(e) {
+    el.style.color = 'var(--red)';
+    el.textContent = '✗ Request failed: ' + e.message;
+  }
+}
+
+function switchTab(tab) {
+  document.getElementById('tabSim').classList.toggle('active', tab === 'sim');
+  document.getElementById('tabSettings').classList.toggle('active', tab === 'settings');
+  document.getElementById('settingsView').classList.toggle('visible', tab === 'settings');
+  document.getElementById('simView').classList.toggle('hidden', tab === 'settings');
+  if (tab === 'settings') loadSettings();
 }
 
 async function checkHealth() {
   try {
     const data = await fetch('/sim/health').then(r => r.json());
-    const dot   = document.getElementById('connDot');
-    const label = document.getElementById('connLabel');
-    if (data.connected) {
-      dot.className   = 'conn-dot ok';
-      label.className = 'conn-label ok';
-      label.textContent = 'Connected';
-    } else {
-      dot.className   = 'conn-dot fail';
-      label.className = 'conn-label fail';
-      label.textContent = 'KDS unreachable';
-    }
+    const dot = document.getElementById('connDot'); const label = document.getElementById('connLabel');
+    if (data.connected) { dot.className = 'conn-dot ok'; label.className = 'conn-label ok'; label.textContent = 'Connected'; }
+    else { dot.className = 'conn-dot fail'; label.className = 'conn-label fail'; label.textContent = 'KDS unreachable'; }
   } catch(e) {}
 }
 
 async function init() {
   try {
     const cfg = await fetch('/sim/config').then(r => r.json());
-    kdsUrl  = cfg.kdsUrl;
-    format  = cfg.format;
-    document.getElementById('kdsUrlLabel').textContent  = cfg.kdsUrl;
-    document.getElementById('kdsUrlInput').value        = cfg.kdsUrl;
-    document.getElementById('formatSel').value          = cfg.format;
+    format = cfg.format;
+    document.getElementById('kdsUrlLabel').textContent = cfg.kdsUrl;
   } catch(e) {}
-  document.getElementById('formatSel').addEventListener('change', e => { format = e.target.value; });
-  document.getElementById('kdsUrlInput').addEventListener('change', e => { document.getElementById('kdsUrlLabel').textContent = e.target.value; });
   await checkHealth();
   setInterval(checkHealth, 30000);
   refreshDropdowns();
