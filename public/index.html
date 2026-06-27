@@ -8,343 +8,164 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:       #0b0d13;
-    --surface:  #131622;
-    --surface2: #191d2c;
-    --surface3: #1e2236;
-    --border:   #232844;
-    --text:     #dce3f2;
-    --muted:    #4c5470;
-    --muted2:   #7880a0;
-    --green:    #36d987;
-    --green-bg: #041a0e;
-    --green-bd: #0c4221;
-    --red:      #f27070;
-    --red-bg:   #240c0c;
-    --red-bd:   #641a1a;
-    --amber:    #f5a820;
-    --amber-bg: #221300;
-    --amber-bd: #603600;
-    --blue:     #597ef7;
-    --blue-bg:  #090f24;
-    --blue-bd:  #162052;
-    --radius:   5px;
+    --bg:       #0f1117;
+    --surface:  #1a1d27;
+    --surface2: #1f2337;
+    --border:   #2a2f4a;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --green:    #4ade80;
+    --green-bg: #052e16;
+    --green-bd: #166534;
+    --red:      #f87171;
+    --red-bg:   #2d1010;
+    --red-bd:   #7f1d1d;
+    --amber:    #fbbf24;
+    --amber-bg: #2d1f00;
+    --amber-bd: #78350f;
+    --blue:     #60a5fa;
+    --blue-bg:  #0c1a2e;
+    --blue-bd:  #1e3a5f;
+    --radius:   6px;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 14px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; font-size: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-  /* ── Topbar ────────────────────────────────────────────────────── */
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 18px;
-    display: flex;
-    align-items: stretch;
-    flex-shrink: 0;
-    height: 48px;
-  }
-  .topbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-right: 18px;
-    border-right: 1px solid var(--border);
-    margin-right: 6px;
-  }
-  .brand-dot {
-    width: 24px; height: 24px;
-    background: linear-gradient(140deg, #1c3060 0%, #2a1660 100%);
-    border: 1px solid #2d3566;
-    border-radius: 5px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    flex-shrink: 0;
-  }
-  .topbar-title { font-weight: 600; font-size: 14px; }
-  .topbar-sub   { font-size: 10px; color: var(--muted); font-family: monospace; margin-top: 1px; }
+  /* ── Topbar ── */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; display: flex; align-items: stretch; gap: 0; flex-shrink: 0; height: 48px; }
+  .topbar-brand { display: flex; align-items: center; gap: 10px; padding-right: 20px; border-right: 1px solid var(--border); margin-right: 4px; }
+  .topbar-title { font-weight: 600; font-size: 15px; }
+  .topbar-sub   { font-size: 11px; color: var(--muted); font-family: monospace; }
 
-  .tab {
-    padding: 0 15px;
-    border: none;
-    background: transparent;
-    color: var(--muted2);
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    transition: color 0.15s;
-  }
+  .tab { padding: 0 18px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-family: inherit; cursor: pointer; border-bottom: 2px solid transparent; height: 100%; display: flex; align-items: center; gap: 7px; }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+  .tab-count { font-family: monospace; font-size: 11px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 3px; }
+  .tab.active .tab-count { color: var(--text); }
 
   .spacer { flex: 1; }
-  .conn { display: flex; align-items: center; gap: 7px; font-size: 12px; }
-  .conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.4s, box-shadow 0.4s; }
-  .conn-dot.ok   { background: var(--green); box-shadow: 0 0 7px #36d98760; }
+  .conn { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+  .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: background 0.3s; }
+  .conn-dot.ok { background: var(--green); }
   .conn-dot.fail { background: var(--red); }
-  .conn-label { color: var(--muted2); font-size: 12px; }
-  .conn-label.ok   { color: var(--green); }
+  .conn-label { color: var(--muted); }
+  .conn-label.ok { color: var(--green); }
   .conn-label.fail { color: var(--red); }
 
-  /* ── Form controls ─────────────────────────────────────────────── */
+  /* ── Form controls ── */
   select, input[type="text"], input[type="number"], input[type="password"] {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 6px 9px;
-    border-radius: var(--radius);
-    font-size: 13px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 7px 10px; border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none;
   }
-  select:focus, input:focus { border-color: #363d6e; }
+  select:focus, input:focus { border-color: #4f5a8a; }
   input[type="number"] { width: 52px; }
-  input[readonly] { opacity: 0.4; cursor: default; }
+  input[readonly] { opacity: 0.5; cursor: default; }
 
-  button {
-    font-family: inherit;
-    cursor: pointer;
-    font-size: 13px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    padding: 6px 13px;
-    transition: opacity 0.15s;
-  }
-  button:hover:not(:disabled) { opacity: 0.82; }
-  button:disabled { opacity: 0.28; cursor: not-allowed; }
+  button { font-family: inherit; cursor: pointer; font-size: 13px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); padding: 7px 14px; transition: opacity 0.15s; }
+  button:hover:not(:disabled) { opacity: 0.85; }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
 
-  .btn-fire    { background: var(--green); color: #050f09; border-color: var(--green); font-weight: 700; width: 100%; padding: 11px; font-size: 14px; }
-  .btn-auto    { flex: 1; font-size: 12px; }
+  .btn-fire    { background: var(--green); color: #0a0a0a; border-color: var(--green); font-weight: 600; width: 100%; padding: 10px; }
+  .btn-auto    { flex: 1; }
   .btn-auto.running { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); }
-  .btn-edit    { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); flex: 1; font-size: 12px; }
-  .btn-addon   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-bd); flex: 1; font-size: 12px; }
-  .btn-void    { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); width: 100%; font-size: 12px; }
-  .btn-void-ol { background: transparent; color: var(--red); border-color: var(--red-bd); width: 100%; font-size: 12px; }
-  .btn-reset   { background: transparent; color: var(--muted); border-color: transparent; font-size: 11px; padding: 5px 10px; }
-  .btn-reset:hover:not(:disabled) { color: var(--muted2); opacity: 1; }
-  .btn-confirm { background: var(--red); color: #0a0404; border-color: var(--red); font-weight: 700; flex: 1; font-size: 12px; }
-  .btn-save    { background: var(--blue); color: #040a1e; border-color: var(--blue); font-weight: 700; padding: 8px 22px; }
-  .btn-test    { padding: 8px 16px; }
+  .btn-edit    { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-bd); flex: 1; }
+  .btn-addon   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-bd); flex: 1; }
+  .btn-void    { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); width: 100%; }
+  .btn-void-ol { background: transparent; color: var(--red); border-color: var(--red-bd); width: 100%; }
+  .btn-reset   { background: transparent; color: var(--muted); border-color: transparent; font-size: 12px; }
+  .btn-confirm { background: var(--red); color: #0a0a0a; border-color: var(--red); font-weight: 600; flex: 1; }
+  .btn-save    { background: var(--blue); color: #0a0a0a; border-color: var(--blue); font-weight: 600; padding: 9px 24px; }
+  .btn-test    { padding: 9px 18px; }
 
-  .row  { display: flex; gap: 7px; align-items: center; }
+  .row  { display: flex; gap: 8px; align-items: center; }
   .full { width: 100%; }
 
-  /* ── Reason box ─────────────────────────────────────────────────── */
-  .reason-box   { background: var(--red-bg); border: 1px solid var(--red-bd); border-radius: var(--radius); padding: 11px; }
-  .reason-title { font-size: 9px; font-weight: 700; color: var(--red); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
-  .reason-opt   { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; color: var(--text); font-size: 12px; }
+  .reason-box   { background: var(--red-bg); border: 1px solid var(--red-bd); border-radius: var(--radius); padding: 12px; }
+  .reason-title { font-size: 11px; font-weight: 600; color: var(--red); margin-bottom: 10px; }
+  .reason-opt   { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; font-size: 13px; }
   .reason-opt input { accent-color: var(--red); }
 
-  /* ── Main layout ────────────────────────────────────────────────── */
-  .layout { display: grid; grid-template-columns: 268px 1fr; flex: 1; min-height: 0; }
+  /* ── Views ── */
+  .view { display: none; flex: 1; min-height: 0; overflow-y: auto; }
+  .view.active { display: flex; flex-direction: column; }
 
-  /* ── Left panel ─────────────────────────────────────────────────── */
-  .actions-panel {
-    border-right: 1px solid var(--border);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background: var(--surface);
-  }
+  /* ── Simulator view ── */
+  .sim-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; max-width: 480px; width: 100%; }
 
-  .ap-section {
-    padding: 12px 13px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    flex-shrink: 0;
-  }
+  .slabel { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .next-badge { font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 1px 7px; border-radius: 4px; font-size: 10px; }
+  .divider { border: none; border-top: 1px solid var(--border); }
 
-  .ap-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.13em;
-    color: var(--muted);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1px;
-  }
-  .next-badge {
-    font-family: monospace;
-    background: var(--surface3);
-    border: 1px solid var(--border);
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    color: var(--muted2);
-  }
+  /* ── Log view ── */
+  .log-header { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--surface); }
+  .log-count  { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .filters    { display: flex; gap: 4px; }
+  .fb { padding: 3px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .fb.on { background: var(--surface2); color: var(--text); border-color: #4f5a8a; }
 
-  .ap-footer {
-    padding: 10px 13px;
-    margin-top: auto;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .log-list  { flex: 1; overflow-y: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 5px; }
+  .log-empty { padding: 48px 16px; text-align: center; color: var(--muted); font-size: 13px; }
 
-  /* ── Log panel ──────────────────────────────────────────────────── */
-  .log-panel {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .log-header {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    background: var(--surface);
-  }
-  .log-title {
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--muted2);
-    letter-spacing: 0.02em;
-  }
-  .log-total {
-    font-family: monospace;
-    font-size: 11px;
-    color: var(--muted2);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 1px 7px;
-    border-radius: 3px;
-  }
-
-  .filters { display: flex; gap: 3px; }
-  .fb {
-    padding: 3px 9px;
-    font-size: 11px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted2);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: background 0.12s, color 0.12s;
-  }
-  .fb .fc { font-family: monospace; font-size: 10px; color: var(--muted); }
-  .fb.on  { background: var(--surface2); color: var(--text); border-color: #333a64; }
-  .fb.on .fc { color: var(--muted2); }
-
-  .log-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .log-empty {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 56px 16px;
-    color: var(--muted);
-    font-size: 13px;
-    text-align: center;
-  }
-  .log-empty.show { display: flex; }
-  .log-empty-icon { font-size: 26px; opacity: 0.25; }
-
-  /* ── Log cards ──────────────────────────────────────────────────── */
   .log-row {
     background: var(--surface);
     border: 1px solid var(--border);
     border-left: 3px solid var(--border);
-    border-radius: 5px;
-    padding: 9px 12px 9px 11px;
+    border-radius: var(--radius);
+    padding: 9px 12px;
     display: flex;
-    gap: 9px;
+    gap: 10px;
     align-items: flex-start;
-    flex-shrink: 0;
-    transition: background 0.12s;
   }
-  .log-row:hover { background: var(--surface2); }
   .log-row.t-new  { border-left-color: var(--green); }
   .log-row.t-edit { border-left-color: var(--amber); }
   .log-row.t-void { border-left-color: var(--red); }
 
-  .badge  { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; white-space: nowrap; margin-top: 2px; font-family: monospace; flex-shrink: 0; letter-spacing: 0.05em; }
-  .b-new  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
-  .b-edit { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+  .badge   { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; white-space: nowrap; margin-top: 2px; font-family: monospace; flex-shrink: 0; }
+  .b-new   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+  .b-edit  { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
   .b-addon { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-bd); }
-  .b-void { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
+  .b-void  { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); }
 
-  .log-content { flex: 1; min-width: 0; }
-  .log-meta    { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
-  .log-pos     { font-weight: 700; font-family: monospace; font-size: 13px; color: var(--text); }
-  .log-tag     { font-size: 11px; color: var(--muted2); }
-  .log-time    { font-size: 10px; color: var(--muted); font-family: monospace; margin-left: auto; flex-shrink: 0; }
-  .log-detail  { font-size: 11px; color: #7a8bb0; margin-top: 4px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .log-status  { font-size: 10px; margin-top: 3px; font-family: monospace; font-weight: 600; }
+  .log-meta   { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .log-pos    { font-weight: 600; font-family: monospace; font-size: 13px; }
+  .log-tag    { font-size: 11px; color: var(--muted); }
+  .log-time   { font-size: 11px; color: var(--muted); font-family: monospace; margin-left: auto; }
+  .log-detail { font-size: 12px; color: #94a3b8; margin-top: 3px; font-family: monospace; }
+  .log-status { font-size: 11px; margin-top: 3px; }
   .log-status.ok   { color: var(--green); }
   .log-status.fail { color: var(--red); }
 
-  /* ── Settings ───────────────────────────────────────────────────── */
-  .settings-wrap { flex: 1; overflow-y: auto; padding: 28px 32px; display: none; }
-  .settings-wrap.visible { display: block; }
-  .sim-wrap { display: contents; }
-  .sim-wrap.hidden > * { display: none; }
-
-  .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 22px; max-width: 560px; margin-bottom: 14px; }
-  .settings-card-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.13em; color: var(--muted); margin-bottom: 18px; }
-  .field { margin-bottom: 14px; }
+  /* ── Settings view ── */
+  .settings-body { padding: 32px; }
+  .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; max-width: 600px; margin-bottom: 20px; }
+  .settings-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 18px; }
+  .field { margin-bottom: 16px; }
   .field:last-child { margin-bottom: 0; }
-  .field label { display: block; font-size: 12px; color: var(--muted2); margin-bottom: 5px; }
+  .field label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
   .field input, .field select { width: 100%; }
-  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
-  .webhook-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-family: monospace; font-size: 12px; color: var(--muted2); margin-top: 6px; word-break: break-all; }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+  .webhook-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-family: monospace; font-size: 12px; color: var(--muted); margin-top: 6px; word-break: break-all; }
   .secret-row { display: flex; gap: 8px; align-items: center; }
   .secret-row input { flex: 1; }
   .secret-set   { font-size: 11px; color: var(--green); }
   .secret-unset { font-size: 11px; color: var(--muted); }
-  .save-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; max-width: 560px; }
-  .save-msg { font-size: 12px; color: var(--green); display: none; }
+  .save-row { display: flex; align-items: center; gap: 12px; margin-top: 24px; max-width: 600px; }
+  .save-msg { font-size: 13px; color: var(--green); display: none; }
   .save-msg.visible { display: block; }
-  .test-result { font-size: 12px; margin-top: 8px; font-family: monospace; max-width: 560px; min-height: 18px; }
+  .test-result { font-size: 12px; margin-top: 6px; font-family: monospace; max-width: 600px; min-height: 18px; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-brand">
-    <div class="brand-dot">⌨</div>
     <div>
       <div class="topbar-title">KDS POS Simulator</div>
       <div class="topbar-sub" id="kdsUrlLabel">—</div>
     </div>
   </div>
   <button class="tab active" id="tabSim" onclick="switchTab('sim')">Simulator</button>
+  <button class="tab" id="tabLog" onclick="switchTab('log')">Event Log <span class="tab-count" id="tabLogCount">0</span></button>
   <button class="tab" id="tabSettings" onclick="switchTab('settings')">Settings</button>
   <div class="spacer"></div>
   <div class="conn">
@@ -353,100 +174,32 @@
   </div>
 </div>
 
-<!-- ── Settings view ───────────────────────────────────────────── -->
+<!-- ── Simulator tab ───────────────────────────────────────────── -->
 
-<div class="settings-wrap" id="settingsView">
+<div class="view active" id="viewSim">
+  <div class="sim-body">
 
-  <div class="settings-card">
-    <div class="settings-card-title">Connection</div>
-
-    <div class="field">
-      <label>KDS server URL</label>
-      <input type="text" id="cfgUrl" placeholder="http://192.168.1.100:3001" oninput="updateWebhookPreview()" />
-      <div class="hint">IP address of the machine running the KDS server.</div>
-    </div>
-
-    <div class="field">
-      <label>POS format</label>
-      <select id="cfgFormat" onchange="updateWebhookPreview()">
-        <option value="manual">Manual</option>
-        <option value="ls-central">LS Central</option>
-        <option value="square">Square</option>
-        <option value="generic">Generic webhook</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Webhook URL — give this to your POS vendor</label>
-      <div class="webhook-preview" id="webhookPreview">—</div>
-      <div class="hint">The KDS will receive orders at this URL.</div>
-    </div>
-  </div>
-
-  <div class="settings-card">
-    <div class="settings-card-title">Credentials</div>
-
-    <div id="credsLsCentral" class="field">
-      <label>LS Central — shared secret <span id="lcStatus" class="secret-unset">(not set)</span></label>
-      <div class="secret-row">
-        <input type="password" id="secretLc" placeholder="Enter secret..." autocomplete="off" />
-      </div>
-      <div class="hint">Must match the secret in KDS Admin → Integration → LS Central.</div>
-    </div>
-
-    <div id="credsSquare" class="field" style="display:none;">
-      <label>Square — webhook secret <span id="sqStatus" class="secret-unset">(not set)</span></label>
-      <div class="secret-row">
-        <input type="password" id="secretSq" placeholder="Enter secret..." autocomplete="off" />
-      </div>
-      <div class="hint">Must match the secret in KDS Admin → Integration → Square.</div>
-    </div>
-
-    <div id="credsGeneric" class="field" style="display:none;">
-      <label>Generic webhook — secret <span id="gwStatus" class="secret-unset">(not set)</span></label>
-      <div class="secret-row">
-        <input type="password" id="secretGw" placeholder="Enter secret..." autocomplete="off" />
-      </div>
-      <div class="hint">Must match the secret in KDS Admin → Integration → Generic Webhook.</div>
-    </div>
-
-    <div id="credsManual" class="field" style="display:none;">
-      <div style="color: var(--muted); font-size: 13px;">Manual format does not require a secret.</div>
-    </div>
-  </div>
-
-  <div class="save-row">
-    <button class="btn-test" onclick="testConnection()">Test connection</button>
-    <button class="btn-save" onclick="saveSettings()">Save settings</button>
-    <span class="save-msg" id="saveMsg">&#10003; Saved</span>
-  </div>
-  <div class="test-result" id="testResult"></div>
-
-</div>
-
-<!-- ── Simulator view ──────────────────────────────────────────── -->
-
-<div class="sim-wrap" id="simView">
-
-  <div class="actions-panel">
-
-    <div class="ap-section">
-      <div class="ap-label">
+    <div>
+      <div class="slabel">
         <span>New order</span>
         <span class="next-badge" id="nextNum">next: #000101</span>
       </div>
-      <button class="btn-fire" onclick="fireOrder()">&#9889; Fire order</button>
-      <div class="row">
-        <button class="btn-auto" id="autoBtn" onclick="toggleAuto()">&#9654; Auto fire</button>
-        <span style="font-size:11px;color:var(--muted);">every</span>
-        <input type="number" id="autoSec" value="8" min="3" max="60" />
-        <span style="font-size:11px;color:var(--muted);">s</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="btn-fire" onclick="fireOrder()">&#9889; Fire order</button>
+        <div class="row">
+          <button class="btn-auto" id="autoBtn" onclick="toggleAuto()">&#9654; Auto fire</button>
+          <span style="font-size:11px;color:var(--muted);">every</span>
+          <input type="number" id="autoSec" value="8" min="3" max="60" />
+          <span style="font-size:11px;color:var(--muted);">s</span>
+        </div>
       </div>
     </div>
 
-    <div class="ap-section">
-      <div class="ap-label">Existing order</div>
-      <select id="existSel" class="full">
+    <hr class="divider" />
+
+    <div>
+      <div class="slabel">Existing order</div>
+      <select id="existSel" class="full" style="margin-bottom:8px;">
         <option value="">-- pick from log --</option>
       </select>
       <div class="row">
@@ -455,17 +208,19 @@
       </div>
     </div>
 
-    <div class="ap-section">
-      <div class="ap-label">Void / cancel</div>
+    <hr class="divider" />
 
-      <select id="voidSel" class="full" onchange="onVoidSelChange()">
+    <div>
+      <div class="slabel">Void / cancel</div>
+
+      <select id="voidSel" class="full" style="margin-bottom:8px;" onchange="onVoidSelChange()">
         <option value="">-- pick order --</option>
       </select>
 
-      <div id="voBox" style="display:none;">
-        <div class="reason-box" style="margin-bottom:7px;">
+      <div id="voBox" style="display:none;margin-bottom:8px;">
+        <div class="reason-box">
           <div class="reason-title">Void order — select reason</div>
-          <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:9px;">
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
             <label class="reason-opt"><input type="radio" name="voR" value="wrong_item" /> Wrong item</label>
             <label class="reason-opt"><input type="radio" name="voR" value="customer_changed_mind" /> Customer changed mind</label>
             <label class="reason-opt"><input type="radio" name="voR" value="out_of_stock" /> Out of stock</label>
@@ -477,16 +232,16 @@
           </div>
         </div>
       </div>
-      <button class="btn-void" id="voBtnEl" onclick="openVO()">&#10005; Void order</button>
+      <button class="btn-void" id="voBtnEl" onclick="openVO()" style="margin-bottom:10px;">&#10005; Void order</button>
 
-      <select id="itemSel" class="full" style="margin-top:2px;" disabled>
+      <select id="itemSel" class="full" style="margin-bottom:8px;" disabled>
         <option value="">-- select order first --</option>
       </select>
 
-      <div id="viBox" style="display:none;">
-        <div class="reason-box" style="margin-bottom:7px;">
+      <div id="viBox" style="display:none;margin-bottom:8px;">
+        <div class="reason-box">
           <div class="reason-title">Void item — select reason</div>
-          <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:9px;">
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
             <label class="reason-opt"><input type="radio" name="viR" value="wrong_item" /> Wrong item</label>
             <label class="reason-opt"><input type="radio" name="viR" value="customer_changed_mind" /> Customer changed mind</label>
             <label class="reason-opt"><input type="radio" name="viR" value="out_of_stock" /> Out of stock</label>
@@ -501,33 +256,103 @@
       <button class="btn-void-ol" id="viBtnEl" onclick="openVI()" disabled>&#10005; Void item</button>
     </div>
 
-    <div class="ap-footer">
-      <button class="btn-reset" onclick="resetAll()">&#128465; Reset all orders</button>
-    </div>
+    <hr class="divider" />
+    <button class="btn-reset" onclick="resetAll()">&#128465; Reset all orders</button>
 
   </div>
+</div>
 
-  <div class="log-panel">
-    <div class="log-header">
-      <div class="log-title">
-        Event log
-        <span class="log-total" id="logCount">0</span>
-      </div>
+<!-- ── Event Log tab ───────────────────────────────────────────── -->
+
+<div class="view" id="viewLog">
+  <div class="log-header">
+    <span style="font-weight:600;font-size:13px;">Event Log</span>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="log-count" id="logCount">0 events</span>
       <div class="filters">
-        <button class="fb on" id="fAll"  onclick="setFilter('all')">All <span class="fc" id="cAll">0</span></button>
-        <button class="fb"    id="fNew"  onclick="setFilter('new')">New <span class="fc" id="cNew">0</span></button>
-        <button class="fb"    id="fEdit" onclick="setFilter('edit')">Edit <span class="fc" id="cEdit">0</span></button>
-        <button class="fb"    id="fVoid" onclick="setFilter('void')">Void <span class="fc" id="cVoid">0</span></button>
-      </div>
-    </div>
-    <div class="log-list" id="logList">
-      <div class="log-empty show" id="emptyMsg">
-        <div class="log-empty-icon">&#9889;</div>
-        No events yet — fire an order to start
+        <button class="fb on" id="fAll"  onclick="setFilter('all')">All</button>
+        <button class="fb"    id="fNew"  onclick="setFilter('new')">New</button>
+        <button class="fb"    id="fEdit" onclick="setFilter('edit')">Edit</button>
+        <button class="fb"    id="fVoid" onclick="setFilter('void')">Void</button>
       </div>
     </div>
   </div>
+  <div class="log-list" id="logList">
+    <div class="log-empty" id="emptyMsg">No events yet — fire an order to start</div>
+  </div>
+</div>
 
+<!-- ── Settings tab ────────────────────────────────────────────── -->
+
+<div class="view" id="viewSettings">
+  <div class="settings-body">
+
+    <div class="settings-card">
+      <div class="settings-card-title">Connection</div>
+
+      <div class="field">
+        <label>KDS server URL</label>
+        <input type="text" id="cfgUrl" placeholder="http://192.168.1.100:3001" oninput="updateWebhookPreview()" />
+        <div class="hint">IP address of the machine running the KDS server.</div>
+      </div>
+
+      <div class="field">
+        <label>POS format</label>
+        <select id="cfgFormat" onchange="updateWebhookPreview()">
+          <option value="manual">Manual</option>
+          <option value="ls-central">LS Central</option>
+          <option value="square">Square</option>
+          <option value="generic">Generic webhook</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Webhook URL — give this to your POS vendor</label>
+        <div class="webhook-preview" id="webhookPreview">—</div>
+        <div class="hint">The KDS will receive orders at this URL.</div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-card-title">Credentials</div>
+
+      <div id="credsLsCentral" class="field">
+        <label>LS Central — shared secret <span id="lcStatus" class="secret-unset">(not set)</span></label>
+        <div class="secret-row">
+          <input type="password" id="secretLc" placeholder="Enter secret..." autocomplete="off" />
+        </div>
+        <div class="hint">Must match the secret in KDS Admin → Integration → LS Central.</div>
+      </div>
+
+      <div id="credsSquare" class="field" style="display:none;">
+        <label>Square — webhook secret <span id="sqStatus" class="secret-unset">(not set)</span></label>
+        <div class="secret-row">
+          <input type="password" id="secretSq" placeholder="Enter secret..." autocomplete="off" />
+        </div>
+        <div class="hint">Must match the secret in KDS Admin → Integration → Square.</div>
+      </div>
+
+      <div id="credsGeneric" class="field" style="display:none;">
+        <label>Generic webhook — secret <span id="gwStatus" class="secret-unset">(not set)</span></label>
+        <div class="secret-row">
+          <input type="password" id="secretGw" placeholder="Enter secret..." autocomplete="off" />
+        </div>
+        <div class="hint">Must match the secret in KDS Admin → Integration → Generic Webhook.</div>
+      </div>
+
+      <div id="credsManual" class="field" style="display:none;">
+        <div style="color: var(--muted); font-size: 13px;">Manual format does not require a secret.</div>
+      </div>
+    </div>
+
+    <div class="save-row">
+      <button class="btn-test" onclick="testConnection()">Test connection</button>
+      <button class="btn-save" onclick="saveSettings()">Save settings</button>
+      <span class="save-msg" id="saveMsg">&#10003; Settings saved</span>
+    </div>
+    <div class="test-result" id="testResult"></div>
+
+  </div>
 </div>
 
 <script>
@@ -663,25 +488,15 @@ async function confirmVI() {
 
 function setFilter(f) {
   filter = f;
-  ['all','new','edit','void'].forEach(k => {
-    const id = 'f' + k[0].toUpperCase() + k.slice(1);
-    document.getElementById(id).classList.toggle('on', f === k);
-  });
+  ['all','new','edit','void'].forEach(k => document.getElementById('f' + k[0].toUpperCase() + k.slice(1)).classList.toggle('on', f === k));
   renderLog();
 }
 
 function renderLog() {
   const list = document.getElementById('logList');
 
-  // Update counts
-  const nNew  = events.filter(e => e.t === 'new' || e.t === 'addon').length;
-  const nEdit = events.filter(e => e.t === 'edit').length;
-  const nVoid = events.filter(e => e.t === 'void_order' || e.t === 'void_item').length;
-  document.getElementById('logCount').textContent = events.length;
-  document.getElementById('cAll').textContent  = events.length;
-  document.getElementById('cNew').textContent  = nNew;
-  document.getElementById('cEdit').textContent = nEdit;
-  document.getElementById('cVoid').textContent = nVoid;
+  document.getElementById('logCount').textContent = events.length + ' event' + (events.length !== 1 ? 's' : '');
+  document.getElementById('tabLogCount').textContent = events.length;
 
   let filtered = events;
   if (filter === 'new')  filtered = events.filter(e => e.t === 'new' || e.t === 'addon');
@@ -689,34 +504,32 @@ function renderLog() {
   if (filter === 'void') filtered = events.filter(e => e.t === 'void_order' || e.t === 'void_item');
 
   Array.from(list.querySelectorAll('.log-row')).forEach(el => el.remove());
-
   const empty = document.getElementById('emptyMsg');
-  if (!filtered.length) { empty.classList.add('show'); return; }
-  empty.classList.remove('show');
+  if (!filtered.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
 
   filtered.forEach(e => {
     const b = BDEFS[e.t] || { l:e.t, c:'b-new' };
     const typeClass = (e.t === 'new' || e.t === 'addon') ? 't-new' : e.t === 'edit' ? 't-edit' : 't-void';
 
     let detail = '';
-    if (e.t === 'new')        detail = (e.items||[]).map(i => i.name+'×'+i.qty).join('  ·  ');
-    if (e.t === 'addon')      detail = '+  ' + (e.items||[]).map(i => i.name+'×'+i.qty).join('  ·  ');
+    if (e.t === 'new')        detail = (e.items||[]).map(i => i.name+'×'+i.qty).join(', ');
+    if (e.t === 'addon')      detail = '+ ' + (e.items||[]).map(i => i.name+'×'+i.qty).join(', ');
     if (e.t === 'edit')       detail = e.chg || '';
     if (e.t === 'void_order') detail = 'reason: ' + (RLABELS[e.reason]||e.reason);
-    if (e.t === 'void_item')  detail = e.item + '   reason: ' + (RLABELS[e.reason]||e.reason);
-
+    if (e.t === 'void_item')  detail = e.item + '  reason: ' + (RLABELS[e.reason]||e.reason);
     const statusTxt = e.status ? e.status + (e.ok ? ' OK' : ' ERR') : '';
 
     const div = document.createElement('div');
     div.className = 'log-row ' + typeClass;
     div.innerHTML =
       `<span class="badge ${b.c}">${b.l}</span>` +
-      `<div class="log-content">` +
+      `<div style="flex:1;min-width:0;">` +
         `<div class="log-meta">` +
           `<span class="log-pos">#${e.pos}</span>` +
-          (e.table  ? `<span class="log-tag">${e.table}</span>` : '') +
-          (e.otype  ? `<span class="log-tag">${e.otype}</span>` : '') +
-          (e.fmt    ? `<span class="log-tag">${e.fmt}</span>` : '') +
+          (e.table ? `<span class="log-tag">${e.table}</span>` : '') +
+          (e.otype ? `<span class="log-tag">${e.otype}</span>` : '') +
+          (e.fmt   ? `<span class="log-tag">${e.fmt}</span>` : '') +
           `<span class="log-time">${e.time}</span>` +
         `</div>` +
         (detail    ? `<div class="log-detail">${detail}</div>` : '') +
@@ -808,10 +621,10 @@ async function testConnection() {
 }
 
 function switchTab(tab) {
-  document.getElementById('tabSim').classList.toggle('active', tab === 'sim');
-  document.getElementById('tabSettings').classList.toggle('active', tab === 'settings');
-  document.getElementById('settingsView').classList.toggle('visible', tab === 'settings');
-  document.getElementById('simView').classList.toggle('hidden', tab === 'settings');
+  ['sim','log','settings'].forEach(t => {
+    document.getElementById('tab' + t[0].toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    document.getElementById('view' + t[0].toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+  });
   if (tab === 'settings') loadSettings();
 }
 
