@@ -480,7 +480,7 @@ async function confirmVI() {
   const isel = document.getElementById('itemSel'); const vsel = document.getElementById('voidSel');
   const itemName = isel.options[isel.selectedIndex]?.text || '';
   try {
-    const result = await simPost('/sim/void-item', { orderItemId: isel.value, reason: r.value });
+    const result = await simPost('/sim/void-item', { posOrderId: vsel.value, orderItemId: isel.value, reason: r.value });
     addEvent({ t:'void_item', pos:vsel.value, item:itemName, reason:r.value, time:new Date().toLocaleTimeString(), status:result.status, ok:result.ok });
   } catch(e) { addEvent({ t:'void_item', pos:vsel.value, item:itemName, reason:r.value, time:new Date().toLocaleTimeString(), status:0, ok:false }); }
   closeVI();
