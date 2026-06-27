@@ -217,6 +217,35 @@ app.get('/sim/health', async (_req, res) => {
   }
 });
 
+app.get('/sim/test-auth', async (_req, res) => {
+  const c      = cfg();
+  const format = c.format;
+
+  // Manual format has no auth — connectivity check only
+  if (format === 'manual') {
+    try {
+      const r = await kdsRequest('GET', '/intake/status');
+      return res.json({ connected: r.ok, authed: true, status: r.status, message: 'Manual — no auth required' });
+    } catch (err) {
+      return res.json({ connected: false, authed: false, status: null, message: err.message });
+    }
+  }
+
+  // Send a minimal signed payload and check whether KDS accepts auth (non-401)
+  const testOrder = { posOrderId: 'TEST-000', table: 'T0', orderType: 'Dine In', server: 'ConnectionTest', guestCount: 1, items: [] };
+  const payload   = buildPayload(format, testOrder, 'new');
+  const bodyStr   = JSON.stringify(payload);
+  const headers   = authHeaders(format, bodyStr);
+
+  try {
+    const r      = await kdsRequest('POST', intakePath(format), payload, headers);
+    const authed = r.status !== 401;
+    res.json({ connected: true, authed, status: r.status, message: authed ? 'Auth accepted by KDS' : 'Secret rejected — KDS returned 401' });
+  } catch (err) {
+    res.json({ connected: false, authed: false, status: null, message: err.message });
+  }
+});
+
 app.get('/sim/items/:posOrderId', async (req, res) => {
   try {
     const r = await kdsRequest('GET', '/orders/expo/all');

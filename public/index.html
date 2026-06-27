@@ -558,13 +558,16 @@ async function testConnection() {
   el.style.color = 'var(--muted)';
   el.textContent = 'Testing...';
   try {
-    const data = await fetch('/sim/health').then(r => r.json());
-    if (data.connected) {
-      el.style.color = 'var(--green)';
-      el.textContent = '✓ Connected — KDS responded OK';
-    } else {
+    const data = await fetch('/sim/test-auth').then(r => r.json());
+    if (!data.connected) {
       el.style.color = 'var(--red)';
-      el.textContent = '✗ Cannot reach KDS at ' + data.kdsUrl + (data.error ? ' (' + data.error + ')' : '');
+      el.textContent = '✗ Cannot reach KDS — ' + (data.message || 'network error');
+    } else if (!data.authed) {
+      el.style.color = 'var(--amber)';
+      el.textContent = '⚠ KDS reachable but secret rejected (401) — check your secret';
+    } else {
+      el.style.color = 'var(--green)';
+      el.textContent = '✓ Connected and authenticated (HTTP ' + data.status + ')';
     }
   } catch(e) {
     el.style.color = 'var(--red)';
