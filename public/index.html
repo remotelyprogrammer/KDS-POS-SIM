@@ -641,7 +641,7 @@ async function syncFromKds() {
   try {
     const data = await fetch('/sim/orders').then(r => r.json());
     const incoming = data.orders || [];
-    if (!incoming.length) return;
+    console.log('[sync] KDS returned ' + incoming.length + ' active order(s)');
 
     const existingPos = new Set(events.map(e => e.pos));
     const now = new Date().toLocaleTimeString();
@@ -649,24 +649,31 @@ async function syncFromKds() {
     let added = 0;
 
     incoming.forEach(o => {
+      const n = parseInt(o.posOrderId, 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
       if (existingPos.has(o.posOrderId)) return;
       events.push({ t:'new', pos:o.posOrderId, table:o.table, otype:o.orderType,
                     items:o.items, time:now, fmt:'kds-sync', status:200, ok:true, synced:true });
       existingPos.add(o.posOrderId);
-      const n = parseInt(o.posOrderId, 10);
-      if (!isNaN(n) && n > maxNum) maxNum = n;
       added++;
     });
 
+    // Always bump counter past highest KDS order number
+    if (maxNum > ctr) { ctr = maxNum; }
+
     if (added) {
-      // Sort newest-first to match normal log order
-      events.sort((a, b) => (b.synced ? 1 : 0) - (a.synced ? 1 : 0));
-      if (maxNum > ctr) { ctr = maxNum; }
+      events.sort((a, b) => {
+        const na = parseInt(a.pos, 10), nb = parseInt(b.pos, 10);
+        return (isNaN(nb) ? -1 : isNaN(na) ? 1 : nb - na);
+      });
       save();
       refreshDropdowns();
       renderLog();
-      console.log('[sync] Imported ' + added + ' active KDS order(s); counter bumped to ' + ctr);
+    } else {
+      save(); // still persist counter bump
     }
+
+    console.log('[sync] Imported ' + added + ' new order(s); counter is now ' + ctr);
   } catch(e) {
     console.warn('[sync] Could not fetch KDS orders:', e.message);
   }
