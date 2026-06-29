@@ -637,6 +637,41 @@ async function checkHealth() {
   } catch(e) {}
 }
 
+async function syncFromKds() {
+  try {
+    const data = await fetch('/sim/orders').then(r => r.json());
+    const incoming = data.orders || [];
+    if (!incoming.length) return;
+
+    const existingPos = new Set(events.map(e => e.pos));
+    const now = new Date().toLocaleTimeString();
+    let maxNum = ctr;
+    let added = 0;
+
+    incoming.forEach(o => {
+      if (existingPos.has(o.posOrderId)) return;
+      events.push({ t:'new', pos:o.posOrderId, table:o.table, otype:o.orderType,
+                    items:o.items, time:now, fmt:'kds-sync', status:200, ok:true, synced:true });
+      existingPos.add(o.posOrderId);
+      const n = parseInt(o.posOrderId, 10);
+      if (!isNaN(n) && n > maxNum) maxNum = n;
+      added++;
+    });
+
+    if (added) {
+      // Sort newest-first to match normal log order
+      events.sort((a, b) => (b.synced ? 1 : 0) - (a.synced ? 1 : 0));
+      if (maxNum > ctr) { ctr = maxNum; }
+      save();
+      refreshDropdowns();
+      renderLog();
+      console.log('[sync] Imported ' + added + ' active KDS order(s); counter bumped to ' + ctr);
+    }
+  } catch(e) {
+    console.warn('[sync] Could not fetch KDS orders:', e.message);
+  }
+}
+
 async function init() {
   try {
     const cfg = await fetch('/sim/config').then(r => r.json());
@@ -645,6 +680,7 @@ async function init() {
   } catch(e) {}
   await checkHealth();
   setInterval(checkHealth, 30000);
+  await syncFromKds();
   refreshDropdowns();
   renderLog();
 }

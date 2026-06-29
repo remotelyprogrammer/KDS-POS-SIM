@@ -249,6 +249,25 @@ app.get('/sim/test-auth', async (_req, res) => {
   }
 });
 
+app.get('/sim/orders', async (req, res) => {
+  try {
+    const r = await kdsRequest('GET', '/orders/expo/all');
+    if (!r.ok) return res.json({ orders: [] });
+    const raw = Array.isArray(r.body) ? r.body : [];
+    const orders = raw.map(o => ({
+      posOrderId : String(o.pos_order_id),
+      table      : o.table_name  || o.table || '',
+      orderType  : o.order_type  || o.orderType || '',
+      server     : o.server_name || o.server || '',
+      items      : (o.items || []).filter(i => i.status !== 'served' && i.status !== 'voided')
+                                  .map(i => ({ name: i.name, qty: i.quantity || 1, sid: i.station_id || 1 })),
+    })).filter(o => o.items.length > 0);
+    res.json({ orders });
+  } catch (err) {
+    res.status(500).json({ orders: [], error: err.message });
+  }
+});
+
 app.get('/sim/items/:posOrderId', async (req, res) => {
   try {
     const r = await kdsRequest('GET', '/orders/expo/all');
