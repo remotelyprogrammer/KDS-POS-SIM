@@ -249,20 +249,33 @@ app.get('/sim/test-auth', async (_req, res) => {
   }
 });
 
+app.get('/sim/orders/raw', async (req, res) => {
+  try {
+    const r = await kdsRequest('GET', '/orders/expo/all');
+    res.json({ ok: r.ok, status: r.status, body: r.body });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/sim/orders', async (req, res) => {
   try {
     const r = await kdsRequest('GET', '/orders/expo/all');
-    if (!r.ok) return res.json({ orders: [] });
-    const raw = Array.isArray(r.body) ? r.body : [];
+    if (!r.ok) return res.json({ orders: [], _debug: { ok: r.ok, status: r.status } });
+    const raw = Array.isArray(r.body) ? r.body
+              : Array.isArray(r.body?.data) ? r.body.data
+              : Array.isArray(r.body?.orders) ? r.body.orders
+              : [];
     const orders = raw.map(o => ({
       posOrderId : String(o.pos_order_id),
       table      : o.table_name  || o.table || '',
       orderType  : o.order_type  || o.orderType || '',
       server     : o.server_name || o.server || '',
-      items      : (o.items || []).filter(i => i.status !== 'served' && i.status !== 'voided')
-                                  .map(i => ({ name: i.name, qty: i.quantity || 1, sid: i.station_id || 1 })),
+      items      : (o.items || [])
+                    .filter(i => !['served','voided','Served','Voided','completed','Completed'].includes(i.status))
+                    .map(i => ({ name: i.name, qty: i.quantity || 1, sid: i.station_id || 1 })),
     })).filter(o => o.items.length > 0);
-    res.json({ orders });
+    res.json({ orders, _debug: { rawCount: raw.length, activeCount: orders.length } });
   } catch (err) {
     res.status(500).json({ orders: [], error: err.message });
   }
