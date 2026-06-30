@@ -234,14 +234,14 @@ app.get('/sim/test-auth', async (_req, res) => {
     }
   }
 
-  // Send a minimal signed payload and check whether KDS accepts auth (non-401)
-  const testOrder = { posOrderId: 'TEST-000', table: 'T0', orderType: 'Dine In', server: 'ConnectionTest', guestCount: 1, items: [{ name: 'TEST-ITEM', qty: 1, sid: 1 }] };
-  const payload   = buildPayload(format, testOrder, 'new');
-  const bodyStr   = JSON.stringify(payload);
-  const headers   = authHeaders(format, bodyStr);
+  // POST /intake/ping with an empty {} body — KDS validates auth headers without creating any orders.
+  // Square HMAC is computed over '{}' (the JSON of the empty body both sides agree on).
+  const pingBody    = {};
+  const pingBodyStr = '{}';
+  const headers     = authHeaders(format, pingBodyStr);
 
   try {
-    const r      = await kdsRequest('POST', intakePath(format), payload, headers);
+    const r      = await kdsRequest('POST', '/intake/ping', pingBody, headers);
     const authed = r.status !== 401;
     res.json({ connected: true, authed, status: r.status, message: authed ? 'Auth accepted by KDS' : 'Secret rejected — KDS returned 401' });
   } catch (err) {
